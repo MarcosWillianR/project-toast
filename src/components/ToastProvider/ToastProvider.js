@@ -7,8 +7,6 @@ function ToastProvider({ children }) {
   const [toasts, setToasts] = React.useState([]);
 
   const createToast = React.useCallback(({ message, variant }) => {
-    console.log(message)
-
     if (!message && !variant) {
       throw Error('need to provide message and variant type');
     };
@@ -33,6 +31,20 @@ function ToastProvider({ children }) {
     const nextToasts = toasts.filter(toast => toast.id !== toastId);
     setToasts(nextToasts);
   }, [toasts]);
+
+  React.useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.code === 'Escape') {
+        setToasts([]);
+      }
+    }
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const value = React.useMemo(() => {
     return { toasts, setToasts, createToast, dismissToast }
