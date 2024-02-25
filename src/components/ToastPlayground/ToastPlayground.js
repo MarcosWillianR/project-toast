@@ -9,6 +9,7 @@ import styles from './ToastPlayground.module.css';
 function ToastPlayground() {
   const [message, setMessage] = React.useState('');
   const [variant, setVariant] = React.useState('');
+
   const { createToast } = React.useContext(ToastContext);
 
   return (

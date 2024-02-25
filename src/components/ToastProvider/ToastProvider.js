@@ -47,7 +47,7 @@ function ToastProvider({ children }) {
   }, []);
 
   const value = React.useMemo(() => {
-    return { toasts, setToasts, createToast, dismissToast }
+    return { toasts, createToast, dismissToast }
   }, [toasts, createToast, dismissToast]);
 
   return (
