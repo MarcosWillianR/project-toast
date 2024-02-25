@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Button from '../Button';
-import Toast from '../Toast';
+import ToastShelf from '../ToastShelf';
 
 import styles from './ToastPlayground.module.css';
 
@@ -10,7 +10,7 @@ const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 function ToastPlayground() {
   const [message, setMessage] = React.useState('');
   const [variant, setVariant] = React.useState('');
-  const [showToast, setShowToast] = React.useState(false);
+  const [toasts, setToasts] = React.useState([]);
 
   function handleShowToast() {
     if (!message && !variant) {
@@ -21,7 +21,21 @@ function ToastPlayground() {
       throw new Error('variants available are ["notice", "warning", "success", "error"]');
     };
 
-    setShowToast(true);
+    const nextToasts = [
+      ...toasts,
+      {
+        id: crypto.randomUUID(),
+        message,
+        variant,
+      },
+    ];
+    
+    setToasts(nextToasts);
+  }
+
+  function handleDismissToast(toastId) {
+    const nextToasts = toasts.filter(toast => toast.id !== toastId);
+    setToasts(nextToasts);
   }
 
   return (
@@ -32,7 +46,13 @@ function ToastPlayground() {
           <h1>Toast Playground</h1>
         </header>
 
-        <div className={styles.controlsWrapper}>
+        <form 
+          className={styles.controlsWrapper}
+          onSubmit={e => {
+            e.preventDefault();
+            handleShowToast();
+          }}
+        >
           <div className={styles.row}>
             <label
               htmlFor="message"
@@ -81,17 +101,16 @@ function ToastPlayground() {
             <div
               className={`${styles.inputWrapper} ${styles.radioWrapper}`}
             >
-              <Button onClick={handleShowToast}>Pop Toast!</Button>
+              <Button>Pop Toast!</Button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
       
-      {showToast && (
-        <Toast variant={variant} onDismiss={(() => setShowToast(false))}>
-          {message}
-        </Toast>
-      )}
+      <ToastShelf 
+        toasts={toasts} 
+        onDismiss={toastId => handleDismissToast(toastId)}
+      />
     </>
   );
 }
